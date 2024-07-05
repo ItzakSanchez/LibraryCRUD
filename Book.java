@@ -22,7 +22,7 @@ public class Book {
 	}
 	
 
-	public boolean sellBook(int id, int cuantity) {
+	public boolean sellBook(int cuantity) {
 		if (this.stock>=cuantity) {
 			this.stock = this.stock-cuantity;
 			return true;
