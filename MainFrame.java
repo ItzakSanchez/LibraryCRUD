@@ -14,7 +14,6 @@ import java.awt.event.ActionEvent;
 import javax.swing.table.DefaultTableModel;
 import java.awt.GridLayout;
 
-
 public class MainFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
@@ -95,12 +94,11 @@ public class MainFrame extends JFrame {
 		}
 		
 		
-
 	/**
 	 * Create the frame.
 	 */
 	public MainFrame() {
-
+		
 		
 		List<Book> bookList = new ArrayList<Book>();
 		List<Sale> salesList = new ArrayList<Sale>();
@@ -113,7 +111,6 @@ public class MainFrame extends JFrame {
 		bookList.add(book2);
 		bookList.add(book3);
 		
-
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1000, 600);
 		mainPanel = new JPanel();
@@ -124,17 +121,16 @@ public class MainFrame extends JFrame {
 		mainPanel.setBorder(BorderFactory.createTitledBorder("Library Manage System"));
 		
 		
+		
+		
 		JPanel searchPanel = new JPanel();
-
 		searchPanel.setBounds(10, 245, 548, 289);
 		searchPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		searchPanel.setBorder(BorderFactory.createTitledBorder("Book List"));
-
 		
 		mainPanel.add(searchPanel);
 		searchPanel.setLayout(null);
 		
-
 		JLabel lblSearch = new JLabel("Search");
 		lblSearch.setBounds(16, 26, 50, 14);
 		searchPanel.add(lblSearch);
@@ -144,7 +140,6 @@ public class MainFrame extends JFrame {
 		comboBoxSearchType.setModel(new DefaultComboBoxModel(new String[] {"by title", "by author", "by category"}));
 		comboBoxSearchType.setBounds(67, 23, 84, 20);
 		searchPanel.add(comboBoxSearchType);
-
 		
 		JTextField searchInput = new JTextField();
 		searchInput.setColumns(10);
@@ -159,11 +154,13 @@ public class MainFrame extends JFrame {
 		});
 		searchPanel.add(btnSearchBook);
 
+		
 
+	
+		
 
 		
 		bookTable = new JTable();
-
 		DefaultTableModel bookModel = new DefaultTableModel();
 		bookModel.addColumn("Id");
 		bookModel.addColumn("Title");
@@ -181,14 +178,11 @@ public class MainFrame extends JFrame {
 		
 		
 		bookTable.setModel(bookModel);
-
 		
 		bookTable.getColumnModel().getColumn(0).setPreferredWidth(40);
 		bookTable.getColumnModel().getColumn(1).setPreferredWidth(137);
 		bookTable.getColumnModel().getColumn(2).setPreferredWidth(123);
 		bookTable.getColumnModel().getColumn(6).setPreferredWidth(45);
-
-
 		//
 		//SELECT ROW BOOK TABLE
 		//
