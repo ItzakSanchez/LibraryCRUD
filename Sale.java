@@ -3,15 +3,15 @@ package edgarItzak.libraryCRUD;
 public class Sale {
 	int idSale;
 	int idBook;
-	int cuantity;
+	int quantity;
 	float price;
 	String saleDate;
 	
-	public Sale(int idSale, int idBook, int cuantity, float price, String saleDate) {
+	public Sale(int idSale, int idBook, int quantity, float price, String saleDate) {
 		super();
 		this.idSale = idSale;
 		this.idBook = idBook;
-		this.cuantity = cuantity;
+		this.quantity = quantity;
 		this.price = price;
 		this.saleDate = saleDate;
 	}
@@ -33,12 +33,12 @@ public class Sale {
 		this.idBook = idBook;
 	}
 
-	public int getCuantity() {
-		return cuantity;
+	public int getQuantity() {
+		return quantity;
 	}
 
-	public void setCuantity(int cuantity) {
-		this.cuantity = cuantity;
+	public void setquantity(int quantity) {
+		this.quantity = quantity;
 	}
 
 	public float getPrice() {

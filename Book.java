@@ -10,8 +10,7 @@ public class Book {
 	private int stock;
 	private float price;
 	
-	public Book(int id,String title, String author, String publicationDate, String category, int stock, float price) {
-		super();
+	public Book(int id,String title, String author, String publicationDate, String category, float price, int stock) {
 		this.id = id;
 		this.title = title;
 		this.author = author;

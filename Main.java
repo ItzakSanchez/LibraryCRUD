@@ -2,6 +2,7 @@ package edgarItzak.libraryCRUD;
 import java.util.*;
 import java.time.*;
 
+
 public class Main {
 
 	public static void main(String[] args) {
@@ -11,14 +12,14 @@ public class Main {
 
 	}
 	//ADD BOOK
-	public void addBook(List<Book> bookList, String title, String author, String publicationDate, String category, int stock, float price) {
+	public void addBook(List<Book> bookList, String title, String author, String publicationDate, String category, float price,int stock) {
 		int maxId = 0;
 		for(Book book:bookList) {
 			if(book.getId()>maxId) {
 				maxId = book.getId();
 			}
 		}
-		Book newBook = new Book((maxId+1), title, author, publicationDate, category, stock, price);
+		Book newBook = new Book((maxId+1), title, author, publicationDate, category, price, stock);
 		bookList.add(newBook);
 	}
 	//SEARCH BY TITLE
@@ -56,7 +57,7 @@ public class Main {
 		public float totalSales(List<Sale> saleList) {
 			float totalSales = 0.0f;
 			for(Sale sale: saleList) {
-				totalSales = totalSales + (sale.getPrice()*sale.getCuantity());
+				totalSales = totalSales + (sale.getPrice()*sale.getQuantity());
 			}
 			return totalSales;
 		}
