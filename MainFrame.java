@@ -1,6 +1,9 @@
 package edgarItzak.libraryCRUD;
 
 import java.awt.EventQueue;
+
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.*;
@@ -8,6 +11,8 @@ import javax.swing.border.EmptyBorder;
 import java.awt.event.ActionListener;
 import java.awt.print.PrinterException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.awt.event.ActionEvent;
@@ -15,7 +20,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.GridLayout;
 
 public class MainFrame extends JFrame {
-
+	
 	private static final long serialVersionUID = 1L;
 	private JPanel mainPanel;
 	private JTextField textField;
@@ -32,6 +37,23 @@ public class MainFrame extends JFrame {
 	private JTextField textFieldStock;
 	private JTable tableSaleList;
 	private JTextField textFieldBookSelectedName;
+	JButton btnClearSelection = new JButton("Clear selection");
+	JButton btnAddNewBook = new JButton("Add new book");
+	JButton btnUpdateBook = new JButton("Update book");
+	JButton btnDeleteBook = new JButton("Delete book");
+	JButton btnSellBook = new JButton("Sell this book");
+	DefaultTableModel tableSaleModel = new DefaultTableModel();
+	JLabel lblSellOutput = new JLabel("");
+	JLabel lblOperationOutput = new JLabel("");
+
+
+
+	boolean wasSold;
+
+
+
+	
+
 	
 	//ADD BOOK
 		public void addBook(List<Book> bookList, String title, String author, String publicationDate, String category, float price,int stock) {
@@ -105,7 +127,7 @@ public class MainFrame extends JFrame {
 		//Example
 		Book book1 = new Book(1,"Don Quijote de la Mancha", "Miguel de Cervantes", "1797", "Parody",(float) 15.80, 20);
 		Book book2 = new Book(2,"Cien años de soledad", "Gabriel García Márquez", "1982", "Magical realist",(float) 18.80, 50);
-		Book book3 = new Book(3,"El alquimosta", "Paulo Cohelo", "1988", "Adventure",(float) 10.10, 35);
+		Book book3 = new Book(3,"El Alquimista", "Paulo Cohelo", "1988", "Adventure",(float) 10.10, 35);
 		
 		bookList.add(book1);
 		bookList.add(book2);
@@ -121,7 +143,9 @@ public class MainFrame extends JFrame {
 		mainPanel.setBorder(BorderFactory.createTitledBorder("Library Manage System"));
 		
 		
-		
+		//****************************
+		//* SEARCH PANEL (BOOK LIST) *
+		//****************************
 		
 		JPanel searchPanel = new JPanel();
 		searchPanel.setBounds(10, 245, 548, 289);
@@ -154,12 +178,6 @@ public class MainFrame extends JFrame {
 		});
 		searchPanel.add(btnSearchBook);
 
-		
-
-	
-		
-
-		
 		bookTable = new JTable();
 		DefaultTableModel bookModel = new DefaultTableModel();
 		bookModel.addColumn("Id");
@@ -170,26 +188,25 @@ public class MainFrame extends JFrame {
 		bookModel.addColumn("Price");
 		bookModel.addColumn("Stock");
 		
-
+		//FILL TABLE WITH BOOK LIST DATA
 		for(Book book: bookList) {
 			Object [] row = {book.getId(),book.getTitle(),book.getAuthor(),book.getPublicationDate(),book.getCategory(),book.getPrice(),book.getStock()};
 			bookModel.addRow(row);
 		}
 		
-		
+
 		bookTable.setModel(bookModel);
 		
 		bookTable.getColumnModel().getColumn(0).setPreferredWidth(40);
 		bookTable.getColumnModel().getColumn(1).setPreferredWidth(137);
 		bookTable.getColumnModel().getColumn(2).setPreferredWidth(123);
 		bookTable.getColumnModel().getColumn(6).setPreferredWidth(45);
-		//
-		//SELECT ROW BOOK TABLE
-		//
+		//SELECT ROW. BOOK TABLE EVENT
 		bookTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
 				if (bookTable.getSelectedRow()>=0) {
 					int bookTblRow = bookTable.getSelectedRow();
+					//ADD DATA TO TEXTFIELDS
 					textFieldId.setText((bookTable.getValueAt(bookTblRow, 0)).toString());
 					textFieldTitle.setText((bookTable.getValueAt(bookTblRow, 1)).toString());
 					textFieldAuthor.setText((bookTable.getValueAt(bookTblRow, 2)).toString());
@@ -198,6 +215,13 @@ public class MainFrame extends JFrame {
 					textFieldPrice.setText((bookTable.getValueAt(bookTblRow, 5)).toString());
 					textFieldStock.setText((bookTable.getValueAt(bookTblRow, 6)).toString());
 					textFieldBookSelectedName.setText((bookTable.getValueAt(bookTblRow, 1)).toString());
+					//BUTTON UPDATES
+					btnClearSelection.setEnabled(true);
+					btnAddNewBook.setEnabled(true);
+					btnUpdateBook.setEnabled(true);
+					btnDeleteBook.setEnabled(true);
+					btnSellBook.setEnabled(true);
+
 				}
 			}
 		});
@@ -209,6 +233,10 @@ public class MainFrame extends JFrame {
 		JButton btnClearSearch = new JButton("Clear search");
 		btnClearSearch.setBounds(425, 22, 113, 23);
 		searchPanel.add(btnClearSearch);
+		
+		//***************************
+		//* BOOK DATA (TEXT FIELDS) *
+		//***************************
 		
 		JPanel dataPanel = new JPanel();
 		dataPanel.setBounds(10, 33, 234, 205);
@@ -287,6 +315,10 @@ public class MainFrame extends JFrame {
 		textFieldStock.setBounds(100, 175, 105, 20);
 		dataPanel.add(textFieldStock);
 		
+		//*******************
+		//* OPERATION PANEL *
+		//*******************
+		
 		JPanel operationPanel = new JPanel();
 		operationPanel.setBounds(256, 33, 146, 205);
 		operationPanel.setBorder(BorderFactory.createTitledBorder("Operations"));
@@ -294,7 +326,6 @@ public class MainFrame extends JFrame {
 		operationPanel.setLayout(null);
 		
 		
-		JButton btnClearSelection = new JButton("Clear selection");
 		btnClearSelection.setBounds(10, 29, 121, 23);
 		btnClearSelection.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -305,12 +336,22 @@ public class MainFrame extends JFrame {
 				textFieldCategory.setText("");
 				textFieldPrice.setText("");
 				textFieldStock.setText("");
+				textFieldBookSelectedName.setText("");
+				
+				//BUTTON UPDATES
+				btnClearSelection.setEnabled(true);
+				btnAddNewBook.setEnabled(true);
+				btnUpdateBook.setEnabled(false);
+				btnDeleteBook.setEnabled(false);
+				btnSellBook.setEnabled(false);
+				
+				//LABEL OUTPUT
+				lblOperationOutput.setText("Cleared selection");
 			}
 		});
 		operationPanel.add(btnClearSelection);
 		
 		
-		JButton btnAddNewBook = new JButton("Add new book");
 		btnAddNewBook.setBounds(10, 73, 121, 23);
 		btnAddNewBook.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -329,18 +370,30 @@ public class MainFrame extends JFrame {
 						textFieldCategory.setText("");
 						textFieldPrice.setText("");
 						textFieldStock.setText("");
+						textFieldBookSelectedName.setText("");
 
+						//BUTTON UPDATES
+						btnClearSelection.setEnabled(true);
+						btnAddNewBook.setEnabled(true);
+						btnUpdateBook.setEnabled(false);
+						btnDeleteBook.setEnabled(false);
+						btnSellBook.setEnabled(false);
+						//LABEL OUTPUT
+						lblOperationOutput.setText("Added book");
+						
 					} else {
-						//Please Fill all textfields
+						//LABEL OUTPUT
+						lblOperationOutput.setText("Pleas fill out all fields");
+						
 					}
 				} else {
-					//Please Clear selection before add new book
+					//LABEL OUTPUT
+					lblOperationOutput.setText("<html><body>Clear selection <br>to add a new book</html></body>");
 				}
 							}
 		});
 		operationPanel.add(btnAddNewBook);
 		
-		JButton btnUpdateBook = new JButton("Update book");
 		btnUpdateBook.setBounds(10, 102, 121, 23);
 		btnUpdateBook.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -357,28 +410,47 @@ public class MainFrame extends JFrame {
 								book.setStock(Integer.parseInt(textFieldStock.getText()));
 							
 								int bookTblRow = bookTable.getSelectedRow();
-								
+								//UPDATE BOOK TABLE
 								bookTable.setValueAt(textFieldTitle.getText(), bookTblRow, 1);
 								bookTable.setValueAt(textFieldAuthor.getText(), bookTblRow, 2);
 								bookTable.setValueAt(textFieldPublishDate.getText(), bookTblRow, 3);
 								bookTable.setValueAt(textFieldCategory.getText(), bookTblRow, 4);
 								bookTable.setValueAt(textFieldPrice.getText(), bookTblRow, 5);
 								bookTable.setValueAt(textFieldStock.getText(), bookTblRow, 6);
+								//CLEAR TEXTFIELDS
+								textFieldId.setText("");
+								textFieldTitle.setText("");
+								textFieldAuthor.setText("");
+								textFieldPublishDate.setText("");
+								textFieldCategory.setText("");
+								textFieldPrice.setText("");
+								textFieldStock.setText("");
+								textFieldBookSelectedName.setText("");
 								
+								//BUTTON UPDATES
+								btnClearSelection.setEnabled(true);
+								btnAddNewBook.setEnabled(true);
+								btnUpdateBook.setEnabled(false);
+								btnDeleteBook.setEnabled(false);
+								btnSellBook.setEnabled(false);
+								//LABEL OUTPUT
+								lblOperationOutput.setText("Book Updated");
 								break;
 							}
 						}
 					} else {
-						//Please Fill all fields
+						//LABEL OUTPUT
+						lblOperationOutput.setText("Pleas fill out all fields");
 					}
-				} else {
-					//Please select a book in the table
+				}
+				else {
+					//LABEL OUTPUT
+					lblOperationOutput.setText("Please select a book in the table");
 				}
 			}
 		});
 		operationPanel.add(btnUpdateBook);
 		
-		JButton btnDeleteBook = new JButton("Delete book");
 		btnDeleteBook.setBounds(10, 131, 121, 23);
 		btnDeleteBook.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -397,6 +469,25 @@ public class MainFrame extends JFrame {
 							
 							bookModel.removeRow(selectedRow);
 							bookList.remove(book);
+							
+							textFieldId.setText("");
+							textFieldTitle.setText("");
+							textFieldAuthor.setText("");
+							textFieldPublishDate.setText("");
+							textFieldCategory.setText("");
+							textFieldPrice.setText("");
+							textFieldStock.setText("");
+							textFieldBookSelectedName.setText("");
+							
+							//BUTTON UPDATES
+							btnClearSelection.setEnabled(true);
+							btnAddNewBook.setEnabled(true);
+							btnUpdateBook.setEnabled(false);
+							btnDeleteBook.setEnabled(false);
+							btnSellBook.setEnabled(false);
+							
+							//LABEL OUTPUT
+							lblOperationOutput.setText("Book Deleted");
 							break;
 						}
 					}
@@ -404,6 +495,15 @@ public class MainFrame extends JFrame {
 			}
 		});
 		operationPanel.add(btnDeleteBook);
+		
+		lblOperationOutput.setBounds(10, 157, 121, 37);
+		operationPanel.add(lblOperationOutput);
+		
+		
+		//********************
+		//* SALES OPERATIONS *
+		//********************
+		
 		
 		JPanel salesPanel = new JPanel();
 		salesPanel.setLayout(null);
@@ -421,17 +521,46 @@ public class MainFrame extends JFrame {
 		lblQuantity.setBounds(21, 71, 62, 14);
 		salesPanel.add(lblQuantity);
 		
-		JSpinner spinnerQuatity = new JSpinner();
-		spinnerQuatity.setBounds(93, 68, 30, 20);
-		salesPanel.add(spinnerQuatity);
+		JSpinner spinnerQuantity = new JSpinner();
+		spinnerQuantity.setModel(new SpinnerNumberModel(Integer.valueOf(1), Integer.valueOf(1), null, Integer.valueOf(1)));
+		spinnerQuantity.setBounds(93, 68, 30, 20);
+		salesPanel.add(spinnerQuantity);
 		
-		JButton btnSellBook = new JButton("Sell this book");
 		btnSellBook.setBounds(10, 109, 126, 23);
 		salesPanel.add(btnSellBook);
+		btnSellBook.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				wasSold = false;
+				if(textFieldBookSelectedName.getText().length()>0 && textFieldId.getText().length()>0) {
+					for(Book book:bookList) {
+						if(book.getId() == Integer.parseInt(textFieldId.getText())) {
+							wasSold = sellBook(salesList, book,(Integer) spinnerQuantity.getValue());
+							if (wasSold) {
+								//UPDATE TABLE.
+								Object [] row = {salesList.size(),book.getId(),(Integer) spinnerQuantity.getValue(),book.getPrice(),LocalDate.now()};
+								tableSaleModel.addRow(row);
+								//UPDATE BOOK TABLE FROM BOOK LIST
+								bookTable.setValueAt(book.getStock(), bookTable.getSelectedRow(),6);
+								textFieldStock.setText(Integer.toString(book.getStock()));
+								lblSellOutput.setText("Book sold.");
+							} else {
+								lblSellOutput.setText("<html><body>Cannot sell book,<br> please verify stock.</body></html>");
+							}
+							
+							break;
+						}
+					}
+				}
+			}
+		});
 		
-		JLabel lblSellOutput = new JLabel("Output");
-		lblSellOutput.setBounds(10, 155, 126, 14);
+		lblSellOutput.setBounds(10, 145, 126, 49);
 		salesPanel.add(lblSellOutput);
+		
+		
+		//**********************
+		//* SALES LIST (TABLE) *
+		//**********************
 		
 		JPanel saleListPanel = new JPanel();
 		saleListPanel.setBounds(568, 33, 360, 369);
@@ -439,17 +568,16 @@ public class MainFrame extends JFrame {
 		mainPanel.add(saleListPanel);
 		saleListPanel.setLayout(null);
 		
-	
-		
+		tableSaleModel.addColumn("IDSale");
+		tableSaleModel.addColumn("IdBook");
+		tableSaleModel.addColumn("Quantity");
+		tableSaleModel.addColumn("Price");
+		tableSaleModel.addColumn("Date");
+		Object [] row = {"1", "1", "1", "19.80", "2024-07-11"};
+		tableSaleModel.addRow(row);
+
 		tableSaleList = new JTable();
-		tableSaleList.setModel(new DefaultTableModel(
-			new Object[][] {
-				{"1", "1", "1", "19.80", "2024-07-11"},
-			},
-			new String[] {
-				"IdSale", "IdBook", "Quantity", "Price", "Date"
-			}
-		));
+		tableSaleList.setModel(tableSaleModel);
 		tableSaleList.getColumnModel().getColumn(0).setPreferredWidth(53);
 		tableSaleList.getColumnModel().getColumn(1).setPreferredWidth(62);
 		tableSaleList.getColumnModel().getColumn(2).setPreferredWidth(61);
@@ -457,6 +585,11 @@ public class MainFrame extends JFrame {
 		JScrollPane scrollPanelSaleList = new JScrollPane(tableSaleList);
 		scrollPanelSaleList.setBounds(10, 30, 340, 328);
 		saleListPanel.add(scrollPanelSaleList);
+		
+		
+		//***************
+		//* TOTAL SALES *
+		//***************
 		
 		JPanel totalSalesPanel = new JPanel();
 		totalSalesPanel.setBounds(568, 413, 360, 121);
@@ -471,11 +604,6 @@ public class MainFrame extends JFrame {
 		JLabel lblTotalSales = new JLabel("Total sales");
 		lblTotalSales.setBounds(184, 42, 51, 14);
 		totalSalesPanel.add(lblTotalSales);
-		
-		
-
-
-		
 	}
 
 
